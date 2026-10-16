@@ -1,0 +1,23 @@
+{
+  "name": "Devenir tech lead en 8 semaines",
+  "short_name": "Tech lead 8 sem.",
+  "description": "Plan d'autoformation de 8 semaines pour devenir tech lead : podcasts, vidéos, exercices et suivi de progression.",
+  "lang": "fr",
+  "dir": "ltr",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eef2f4",
+  "theme_color": "#0d6b77",
+  "categories": ["education", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Bilan de la semaine", "short_name": "Bilan", "url": "./#bilan", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

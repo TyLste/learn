@@ -1,6 +1,6 @@
 /* Service worker du plan « Devenir tech lead en 8 semaines ».
    Changez VERSION à chaque modification de index.html pour proposer la mise à jour. */
-const VERSION = "v1";
+const VERSION = "v2";
 const APP_CACHE = "techlead8-app-" + VERSION;
 const FONT_CACHE = "techlead8-fonts";
 
@@ -17,7 +17,12 @@ const APP_FILES = [
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(APP_CACHE).then((cache) => cache.addAll(APP_FILES)));
+  // La page est indispensable ; un fichier secondaire absent ne bloque pas l'installation.
+  event.waitUntil(caches.open(APP_CACHE).then((cache) =>
+    cache.add("./index.html").then(() =>
+      Promise.all(APP_FILES.map((f) => cache.add(f).catch(() => null)))
+    )
+  ));
 });
 
 self.addEventListener("activate", (event) => {

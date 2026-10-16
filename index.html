@@ -363,6 +363,8 @@ h1 {
   background: var(--accent); color: var(--surface);
 }
 .appbar button.ghost { background: transparent; color: var(--accent); }
+.install-help { flex: 1 1 100%; }
+.install-help ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
 
 footer { font-size: 13px; color: var(--muted); }
 footer p { margin: 0 0 6px; }
@@ -397,6 +399,7 @@ footer p { margin: 0 0 6px; }
       <button type="button" id="appbarGo"></button>
       <button type="button" class="ghost" id="appbarClose">Plus tard</button>
     </div>
+    <div class="install-help" id="installHelp" hidden></div>
   </div>
 
   <p class="rule"><b>Après chaque écoute :</b> résumez-la à voix haute en 2 minutes sur votre dictaphone. Ce que j'ai retenu, ce que je ferais différemment, ce que je teste cette semaine.</p>
@@ -409,6 +412,7 @@ footer p { margin: 0 0 6px; }
 
   <footer>
     <p>Chaque case cochée est enregistrée avec la date du jour, sur cet appareil. L'application fonctionne aussi hors ligne.</p>
+    <p><a href="#" id="installLink">Installer l'appli sur cet appareil</a></p>
     <p>Un lien ne marche plus ? Touchez le mot-clé pour le copier, puis collez-le dans votre appli de podcasts ou dans YouTube.</p>
   </footer>
 </div>
@@ -952,11 +956,13 @@ footer p { margin: 0 0 6px; }
   var txt = document.getElementById("appbarText");
   var go = document.getElementById("appbarGo");
   var close = document.getElementById("appbarClose");
+  var help = document.getElementById("installHelp");
+  var footerLink = document.getElementById("installLink");
   var action = null;
-  var DISMISS_KEY = "techlead8.installDismissed";
+  var DISMISS_KEY = "techlead8.installDismissed.v2";
 
   function isStandalone() {
-    return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+    return (window.matchMedia && (window.matchMedia("(display-mode: standalone)").matches || window.matchMedia("(display-mode: window-controls-overlay)").matches)) || window.navigator.standalone === true;
   }
   function dismissed() { try { return localStorage.getItem(DISMISS_KEY) === "1"; } catch (e) { return false; } }
   function show(text, label, fn, closable) {
@@ -972,28 +978,75 @@ footer p { margin: 0 0 6px; }
   go.addEventListener("click", function () { if (action) action(); });
   close.addEventListener("click", function () {
     try { localStorage.setItem(DISMISS_KEY, "1"); } catch (e) {}
-    hide();
+    hide(); help.hidden = true;
   });
 
-  // Android, Chrome, Edge : invite d'installation native
+  // ---- Détection du navigateur, pour donner le bon geste quand il n'y a pas d'invite automatique
+  var ua = navigator.userAgent || "";
+  var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var isAndroid = /Android/i.test(ua);
+  var inApp = /FBAN|FBAV|Instagram|Line\/|LinkedInApp|Snapchat|Twitter|GSA\/|; wv\)/i.test(ua);
+  var isSamsung = /SamsungBrowser/i.test(ua);
+  var isFirefox = /Firefox|FxiOS/i.test(ua);
+  var isEdge = /Edg\//i.test(ua);
+  var isSafariMac = !isIOS && /Macintosh/.test(ua) && /Safari/.test(ua) && !/Chrome|Chromium|Edg\//.test(ua);
+
+  function steps() {
+    if (inApp) return ["Cette page est ouverte dans une autre appli, qui ne permet pas l'installation.", "Touchez le menu de cette appli, puis « Ouvrir dans le navigateur » (" + (isIOS ? "Safari" : "Chrome") + ").", "Recommencez ensuite depuis le navigateur."];
+    if (isIOS) return ["Touchez le bouton Partager (le carré avec une flèche vers le haut), en bas ou en haut de l'écran.", "Faites défiler et touchez « Sur l'écran d'accueil ». S'il n'apparaît pas, touchez « Modifier les actions » pour l'ajouter.", "Touchez « Ajouter ». Sur un iPhone ancien (avant iOS 16.4), utilisez Safari."];
+    if (isAndroid && isSamsung) return ["Touchez le menu ≡ en bas à droite.", "Touchez « Ajouter la page à », puis « Écran d'accueil »."];
+    if (isAndroid && isFirefox) return ["Touchez le menu ⋮.", "Touchez « Installer » ou « Ajouter à l'écran d'accueil »."];
+    if (isAndroid) return ["Touchez le menu ⋮ en haut à droite de Chrome.", "Touchez « Installer l'application » ou « Ajouter à l'écran d'accueil », puis « Installer »."];
+    if (isSafariMac) return ["Dans la barre des menus, ouvrez « Fichier ».", "Choisissez « Ajouter au Dock » (macOS Sonoma ou plus récent)."];
+    if (isFirefox) return ["Firefox sur ordinateur ne sait pas installer les applis web.", "Ouvrez cette page dans Chrome ou Edge pour l'installer."];
+    if (isEdge) return ["Cliquez sur l'icône d'installation à droite de la barre d'adresse.", "Ou : menu … → « Applications » → « Installer ce site en tant qu'application »."];
+    return ["Cliquez sur l'icône d'installation (un écran avec une flèche) à droite de la barre d'adresse.", "Ou : menu ⋮ → « Caster, enregistrer et partager » → « Installer la page en tant qu'appli »."];
+  }
+  function showHelp() {
+    help.innerHTML = "";
+    var ol = document.createElement("ol");
+    steps().forEach(function (t) { var li = document.createElement("li"); li.textContent = t; ol.appendChild(li); });
+    help.appendChild(ol);
+    help.hidden = false;
+    bar.hidden = false;
+    go.hidden = true;
+    txt.textContent = "Pour installer le plan :";
+    close.hidden = false;
+    close.textContent = "Fermer";
+    bar.scrollIntoView({ block: "nearest" });
+  }
+
   var deferred = null;
+  function install() {
+    if (deferred) {
+      var d = deferred; deferred = null;
+      hide();
+      d.prompt();
+      d.userChoice.then(function (r) { if (r && r.outcome !== "accepted") offerInstall(); });
+    } else {
+      showHelp();
+    }
+  }
+  function offerInstall() {
+    if (isStandalone()) return;
+    help.hidden = true;
+    close.textContent = "Plus tard";
+    show("Installez le plan sur votre écran d'accueil pour l'ouvrir comme une appli, même hors ligne.", "Installer", install, true);
+  }
+
+  // Chrome, Edge, Samsung : invite native quand le navigateur la propose
   window.addEventListener("beforeinstallprompt", function (e) {
     e.preventDefault();
     deferred = e;
-    if (isStandalone() || dismissed()) return;
-    show("Installez le plan sur votre écran d'accueil pour l'ouvrir comme une appli, même hors ligne.", "Installer", function () {
-      hide();
-      deferred.prompt();
-      deferred.userChoice.then(function () { deferred = null; });
-    }, true);
+    if (!dismissed()) offerInstall();
   });
-  window.addEventListener("appinstalled", hide);
+  window.addEventListener("appinstalled", function () { hide(); footerLink.hidden = true; });
 
-  // iPhone, iPad : pas d'invite native, on explique le geste
-  var ua = navigator.userAgent || "";
-  var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  if (isIOS && !isStandalone() && !dismissed()) {
-    show("Pour installer : touchez Partager, puis « Sur l'écran d'accueil ».", "", null, true);
+  if (isStandalone()) footerLink.hidden = true;
+  else {
+    footerLink.addEventListener("click", function (e) { e.preventDefault(); help.hidden = true; install(); });
+    // Bandeau affiché dans tous les cas, même sans invite native
+    if (!dismissed()) offerInstall();
   }
 
   // Changement de jour pendant que l'appli reste ouverte : on recalcule la semaine en cours
