@@ -1,0 +1,900 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Devenir tech lead en 8 semaines</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one narrow column, a sticky period switcher, each item a row with a large tap target on the left. */
+:root {
+  --bg: #eef2f4;
+  --surface: #ffffff;
+  --ink: #14232b;
+  --muted: #586972;
+  --line: #d3dce1;
+  --accent: #0d6b77;
+  --accent-soft: #dcecee;
+  --signal: #b8700c;
+  --done: #2c7a4c;
+  --done-soft: #e1f0e6;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1518; --surface: #142126; --ink: #e2ebee; --muted: #93a5ac; --line: #263840;
+    --accent: #55b6c2; --accent-soft: #17343a; --signal: #f0a640; --done: #62c48d; --done-soft: #16322a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1518; --surface: #142126; --ink: #e2ebee; --muted: #93a5ac; --line: #263840;
+  --accent: #55b6c2; --accent-soft: #17343a; --signal: #f0a640; --done: #62c48d; --done-soft: #16322a;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+.wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+a { color: var(--accent); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+/* Header */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+h1 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(30px, 8vw, 44px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin: 6px 0 0;
+  text-wrap: balance;
+}
+.summary {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+}
+.pct {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+.pct small { font-size: 18px; }
+.summary-lines { min-width: 0; display: flex; flex-direction: column; gap: 4px; font-size: 15px; }
+.summary-lines strong { font-weight: 700; }
+.bar {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 4px;
+}
+.bar span {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--line);
+  position: relative;
+  overflow: hidden;
+}
+.bar span i {
+  position: absolute; inset: 0 auto 0 0;
+  background: var(--accent);
+  border-radius: 4px;
+}
+.bar span.now { outline: 2px solid var(--signal); outline-offset: 1px; }
+.bar-legend {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: -10px;
+}
+.sync {
+  grid-column: 1 / -1;
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sync::before {
+  content: "";
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--muted);
+  flex: none;
+}
+.sync[data-state="cloud"]::before { background: var(--done); }
+.sync[data-state="local"]::before { background: var(--signal); }
+
+.rule {
+  border-left: 3px solid var(--signal);
+  padding: 2px 0 2px 12px;
+  font-size: 15px;
+  color: var(--ink);
+}
+.rule b { font-weight: 700; }
+
+/* Period switcher */
+.tabs {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  background: var(--bg);
+  padding-block: 8px;
+  margin-inline: -4px;
+  padding-inline: 4px;
+}
+.tabs-inner {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 4px;
+}
+.tab {
+  border: 0;
+  background: transparent;
+  border-radius: 9px;
+  padding: 8px 2px 6px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+.tab .t1 { font-family: var(--display); font-weight: 700; font-size: 15px; line-height: 1.1; }
+.tab .t2 { font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tab[aria-selected="true"] { background: var(--accent); color: var(--surface); }
+.tab[aria-selected="true"] .t2 { color: inherit; opacity: 0.85; }
+.tab .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--signal); }
+.tab .dot[hidden] { display: none; }
+
+/* Period panel */
+.panel { display: flex; flex-direction: column; gap: 20px; }
+.panel-head h2 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1.15;
+  margin: 4px 0 8px;
+  text-wrap: balance;
+}
+.goal { margin: 0; color: var(--ink); max-width: 62ch; }
+.dates { font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.now-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--signal);
+  color: var(--surface);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+
+.group-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 6px;
+}
+.group-head h3 {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 19px;
+  margin: 0;
+}
+.count { font-family: var(--mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.item {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 4px 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.item:last-child { border-bottom: 0; }
+.check {
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  border: 0; background: transparent; cursor: pointer;
+  margin: -6px 0 0 -6px;
+  border-radius: 10px;
+}
+.check span {
+  width: 26px; height: 26px;
+  border: 2px solid var(--muted);
+  border-radius: 7px;
+  display: grid; place-items: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+.check svg { width: 16px; height: 16px; opacity: 0; transition: opacity 0.15s; }
+.item.is-done .check span { background: var(--done); border-color: var(--done); }
+.item.is-done .check svg { opacity: 1; }
+.check svg path { stroke: var(--surface); }
+.body { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.meta {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  display: flex; flex-wrap: wrap; gap: 4px 10px;
+  font-variant-numeric: tabular-nums;
+}
+.meta .kind { color: var(--accent); font-weight: 500; }
+.meta .kind.search { color: var(--signal); }
+.title { font-weight: 700; font-size: 16px; line-height: 1.35; overflow-wrap: anywhere; }
+.item.is-done .title { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line); text-decoration-thickness: 2px; }
+.who { font-size: 14px; color: var(--muted); }
+.note { font-size: 14px; color: var(--ink); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 4px; }
+.open {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+}
+.open svg { width: 12px; height: 12px; }
+.kw {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px dashed var(--line);
+  background: transparent;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+  max-width: 100%;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.kw .lbl { color: var(--muted); }
+.kw.copied { border-style: solid; border-color: var(--done); color: var(--done); }
+.where { font-size: 13px; color: var(--muted); }
+.when { font-family: var(--mono); font-size: 12px; color: var(--done); }
+.ex-text b { font-weight: 700; }
+.item.is-done .ex-text { color: var(--muted); }
+.deliverable { background: var(--accent-soft); border-radius: 12px; padding: 4px 12px; }
+.deliverable .item { border-bottom: 0; }
+
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.toggle {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 14px; color: var(--muted); cursor: pointer;
+  border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; background: var(--surface);
+}
+.toggle[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+.remaining { font-family: var(--mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.empty-done { color: var(--muted); font-size: 14px; padding: 12px 0; margin: 0; }
+
+.prompt {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.prompt p { margin: 0; }
+.prompt q { font-style: italic; quotes: "« " " »"; }
+.copy-btn {
+  align-self: flex-start;
+  border: 1px solid var(--accent); color: var(--accent); background: transparent;
+  border-radius: 999px; padding: 6px 14px; font-weight: 700; font-size: 14px; cursor: pointer;
+}
+footer { font-size: 13px; color: var(--muted); }
+footer p { margin: 0 0 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Plan d'autoformation · 14 oct. → 9 déc. 2026</div>
+    <h1>Devenir tech lead en 8&nbsp;semaines</h1>
+  </header>
+
+  <section class="summary" aria-label="Progression">
+    <div class="pct" id="pct">0<small>%</small></div>
+    <div class="summary-lines">
+      <div id="sumWeek"></div>
+      <div id="sumCounts"></div>
+    </div>
+    <div class="bar" id="bar" aria-hidden="true"></div>
+    <div class="bar-legend" aria-hidden="true"><span>S1</span><span>S2</span><span>S3</span><span>S4</span><span>S5</span><span>S6</span><span>S7</span><span>S8</span></div>
+    <div class="sync" id="sync" data-state="wait">Chargement de votre progression…</div>
+  </section>
+
+  <p class="rule"><b>Après chaque écoute :</b> résumez-la à voix haute en 2 minutes sur votre dictaphone. Ce que j'ai retenu, ce que je ferais différemment, ce que je teste cette semaine.</p>
+
+  <nav class="tabs" aria-label="Périodes">
+    <div class="tabs-inner" role="tablist" id="tabs"></div>
+  </nav>
+
+  <main id="panel" class="panel" role="tabpanel"></main>
+
+  <footer>
+    <p>Chaque case cochée est enregistrée avec la date du jour. Connecté à claude.ai, vous retrouvez votre progression sur tous vos appareils.</p>
+    <p>Un lien ne marche plus ? Touchez le mot-clé pour le copier, puis collez-le dans votre appli de podcasts ou dans YouTube.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var START = new Date(2026, 9, 14); // 14 octobre 2026
+
+  // kind: pod (podcast), vid (vidéo), page (page ou diapos), chan (chaîne), find (à chercher)
+  var PERIODS = [
+    {
+      id: "p1", tab: "S1-2", weeks: [1, 2],
+      dates: "14 → 27 octobre",
+      title: "Comprendre le rôle",
+      goal: "Pouvoir expliquer en 3 minutes ce que fait un tech lead, ce qu'il ne fait pas, et en quoi il diffère d'un senior, d'un lead dev, d'un engineering manager et d'un architecte.",
+      media: [
+        { id: "m-ifttd-359", kind: "pod", src: "IFTTD", code: "#359", min: 75, title: "Devenir tech lead : Ne rien lâcher", who: "Houleymatou Baldé", url: "https://www.ifttd.io/episodes/devenir-tech-lead", kw: "IFTTD devenir tech lead" },
+        { id: "m-ifttd-349", kind: "pod", src: "IFTTD", code: "#349", title: "Tech et Soft Skills : Pourquoi l'empathie fait la différence dans une équipe de dev ?", who: "Sébastien Deleuze", url: "https://www.ifttd.io/episodes/tech-et-soft-skills", kw: "IFTTD soft skills empathie" },
+        { id: "m-ifttd-50", kind: "pod", src: "IFTTD", code: "#50", min: 55, title: "Séniorité : Être dev sénior et sénior", who: "Jacques Ducloy", url: "https://www.ifttd.io/episodes/50-etre-dev-senior-et-senior-jacques-ducloy", kw: "IFTTD séniorité" },
+        { id: "m-ifttd-246", kind: "pod", src: "IFTTD", code: "#246", min: 60, title: "Plans de carrière : Tracer sa route", who: "Nicolas Guerin", url: "https://www.ifttd.io/episodes/plans-de-carriere", kw: "IFTTD plans de carrière" },
+        { id: "m-ifttd-258", kind: "pod", src: "IFTTD", code: "#258", min: 59, title: "Rôle d'architecte : D'infras, d'applicatifs ou d'entreprise", who: "Vianney Beaudoux", note: "Pour distinguer tech lead et architecte.", url: "https://www.ifttd.io/episodes/role-d-architecte", kw: "IFTTD rôle d'architecte" },
+        { id: "m-ifttd-176", kind: "pod", src: "IFTTD", code: "#176", min: 60, title: "Engineering Program Manager : le multiplicateur de force d'une équipe tech", who: "Cécile Ritte", note: "Un rôle voisin à comparer.", url: "https://www.ifttd.io/episodes/engineering-program-manager", kw: "IFTTD engineering program manager" },
+        { id: "m-techrocks-soulez", kind: "pod", src: "Tech.Rocks · Paroles de Tech Leaders", min: 26, title: "Bruno Soulez, Auction.fr et IFTTD (1/2)", url: "https://podcast.ausha.co/tech-rocks/bruno-soulez-auction-fr-et-ifttd-1-2-s02ep03", kw: "Paroles de Tech Leaders" },
+        { id: "m-confoo-deland", kind: "page", src: "ConFoo 2024", title: "Comment devenir Tech Lead", who: "Karol Deland", note: "Présentation trouvée, pas la vidéo.", url: "https://confoo.ca/en/2024/session/comment-devenir-tech-lead", label: "Présentation", kw: "Karol Deland tech lead", where: "YouTube" },
+        { id: "m-devoxx-techlead", kind: "find", src: "Devoxx France", title: "Conférences sur le rôle de tech lead", kw: ["Devoxx France tech lead", "Devoxx staff engineer", "leadership technique Devoxx"], where: "YouTube, chaîne Devoxx FR" }
+      ],
+      exercises: [
+        { id: "e1-fiche", b: "Fiche de poste", t: "Rédigez une fiche de poste de tech lead d'une page, sans modèle : missions, ce qui n'en fait pas partie, indicateurs de réussite. Réécrivez-la fin de semaine 2 et comparez." },
+        { id: "e1-roles", b: "Tableau des 5 rôles", t: "Senior, lead dev, tech lead, engineering manager, architecte : leurs responsabilités. Notez les variations entendues dans les podcasts." },
+        { id: "e1-auto", b: "Auto-évaluation", t: "Notez-vous de 1 à 5 sur 4 axes : technique, communication, organisation, humain. Vous referez ce bilan en semaine 8." }
+      ],
+      deliverable: { id: "l1-audio", b: "Livrable", t: "Un enregistrement audio de 3 minutes : « Mon rôle de tech lead, tel que je le comprends »." }
+    },
+    {
+      id: "p2", tab: "S3-4", weeks: [3, 4],
+      dates: "28 octobre → 10 novembre",
+      title: "Le leadership technique",
+      goal: "Savoir prendre une décision technique, la documenter et la défendre face à des objections.",
+      media: [
+        { id: "m-ifttd-374", kind: "pod", src: "IFTTD", code: "#374", min: 59, title: "Architecture : Pourquoi les sujets humains font toute la différence", who: "Thomas Pierrain", url: "https://www.ifttd.io/episodes/architecture", kw: "IFTTD Thomas Pierrain architecture" },
+        { id: "m-ifttd-140", kind: "pod", src: "IFTTD", code: "#140", min: 60, title: "Architecture logicielle : Poser les bases et maintenir la structure", who: "Nicolas Delsaux", url: "https://www.ifttd.io/episodes/architecture-logicielle", kw: "IFTTD architecture logicielle" },
+        { id: "m-ad-berthier", kind: "pod", src: "Artisan Développeur", min: 13, title: "L'architecte", who: "David Berthier", note: "ADR, décisions collectives, documentation vivante.", url: "https://podcast.ausha.co/artisan-developpeur/l-architecte-avec-david-berthier", kw: "Artisan Développeur architecte Berthier" },
+        { id: "m-devfest-adr", kind: "vid", src: "DevFest Toulouse 2018", title: "Architecture Decision Records : Réconciliez-vous avec votre documentation", who: "Arnaud Bos", url: "https://www.youtube.com/watch?v=EDYplU1PB5s", kw: "Architecture Decision Records Arnaud Bos", where: "YouTube" },
+        { id: "m-devoxx23-archi", kind: "vid", src: "Devoxx France 2023", min: 15, title: "Tous architectes", note: "Décider par consentement, rendre les ADR visibles.", url: "https://www.youtube.com/watch?v=2xnC9ock_N0", kw: "Devoxx France 2023 tous architectes", where: "YouTube" },
+        { id: "m-ad-platel", kind: "pod", src: "Artisan Développeur", min: 10, title: "Gérer du (gros) legacy", who: "Kevin Platel", url: "https://podcast.ausha.co/artisan-developpeur/ge-rer-du-gros-legacy-avec-kevin-platel", kw: "Artisan Développeur legacy Platel" },
+        { id: "m-devoxx15-dette", kind: "page", src: "Devoxx France 2015", min: 17, title: "Vos managers ne veulent pas entendre parler de la dette technique, tant mieux !", who: "Freddy Mallet", url: "https://codeandtalk.com/v/devoxx-france-2015/vos-managers-ne-veulent-pas-entendre-parler-de-la-dette-technique-tant-mieux", label: "Fiche", kw: "Freddy Mallet dette technique Devoxx", where: "YouTube" },
+        { id: "m-devoxx26-conception", kind: "find", src: "Devoxx France 2026", title: "Vous pensiez que la dette technique était le pire ? Voici la dette de conception !", who: "Julien Topçu, Josian Chevalier", kw: "dette de conception Devoxx 2026", where: "YouTube" },
+        { id: "m-devoxx18-cto", kind: "page", src: "Devoxx France 2018", title: "Un CTO paie toujours ses dettes", note: "Prioriser la dette avec le produit.", url: "https://cfp.devoxx.fr/2018/talk/ROE-5518/Un_CTO_paie_toujours_ses_dettes.html", label: "Programme", kw: "Un CTO paie toujours ses dettes", where: "YouTube" },
+        { id: "m-devoxx25-review", kind: "find", src: "Devoxx France 2025", title: "Une revue de code qui traîne ?", who: "Mohamed Ait Abderrahman", note: "Méthode Ship / Show / Ask.", kw: "revue de code qui traîne Devoxx", where: "YouTube" },
+        { id: "m-ifttd-240", kind: "pod", src: "IFTTD", code: "#240", min: 59, title: "Tests : l'importance d'avoir une vraie stratégie", who: "Jérôme Guilloux", url: "https://www.ifttd.io/episodes/strategie-de-tests-et-valeur-ajoutee-des-tests", kw: "IFTTD stratégie de tests" },
+        { id: "m-ifttd-231", kind: "pod", src: "IFTTD", code: "#231", min: 67, title: "Développement pragmatique : La théorie de la pratique", who: "Frédéric Bouchery", url: "https://www.ifttd.io/episodes/developpement-pragmatique", kw: "IFTTD développement pragmatique" },
+        { id: "m-ifttd-64", kind: "pod", src: "IFTTD", code: "#64", min: 60, title: "Anti hype : Faut-il être à la mode pour être à la pointe ?", who: "Quentin de Metz", note: "Choisir une techno sans céder à la mode.", url: "https://www.ifttd.io/episodes/faut-il-etre-a-la-mode-pour-etre-a-la-pointe", kw: "IFTTD anti hype" },
+        { id: "m-ifttd-113", kind: "pod", src: "IFTTD", code: "#113", min: 68, title: "Documentation : C'est une bonne position ça, Scribe ?", who: "Sarah Haïm-Lubczanski", url: "https://www.ifttd.io/episodes/113-cest-une-bonne-position-a-scribe-sarah-ham-lubczanski", kw: "IFTTD documentation" }
+      ],
+      exercises: [
+        { id: "e2-adr", b: "Écrivez 3 ADR", t: "Une page chacun : contexte, options, décision, conséquences. Sur de vrais sujets, par exemple « Faut-il découper ce service ? »." },
+        { id: "e2-review", b: "Revue de code bienveillante", t: "Sur une pull request open source récente, rédigez vos commentaires sans les publier. Pour chacun : bloquant, suggestion ou question ?" },
+        { id: "e2-dette", b: "Cartographie de la dette", t: "Listez 10 problèmes d'un projet, classez-les par impact et effort, puis convainquez un manager non technique de financer les 2 premiers." },
+        { id: "e2-defense", b: "Défendez un ADR devant Claude", t: "Claude joue un collègue sceptique. Restez calme, reconnaissez les bons arguments, maintenez ou ajustez la décision." }
+      ],
+      deliverable: { id: "l2-adr", b: "Livrable", t: "3 ADR écrits et une note « dette technique » d'une page pour un public non technique." }
+    },
+    {
+      id: "p3", tab: "S5-6", weeks: [5, 6],
+      dates: "11 → 24 novembre",
+      title: "L'humain et la communication",
+      goal: "Savoir donner un feedback, déléguer, animer une réunion et désamorcer un désaccord, avec des phrases préparées à l'avance.",
+      media: [
+        { id: "m-ifttd-130", kind: "pod", src: "IFTTD", code: "#130", min: 60, title: "Progression équipe : Faire progresser son équipe", who: "Nicolas Gandemer", url: "https://www.ifttd.io/episodes/faire-progresser-son-equipe", kw: "IFTTD faire progresser son équipe" },
+        { id: "m-ifttd-126", kind: "pod", src: "IFTTD", code: "#126", min: 65, title: "Servant leadership : un CTO au service de ses équipes", who: "Tristan Foureur", note: "Autonomie et responsabilisation.", url: "https://www.ifttd.io/episodes/un-cto-au-service-de-ses-quipes", kw: "IFTTD servant leadership" },
+        { id: "m-ifttd-202", kind: "pod", src: "IFTTD", code: "#202", min: 64, title: "Partage de connaissance : Théorie du ruissellement de l'information", who: "Eric Chappa", url: "https://www.ifttd.io/episodes/partage-de-connaissance", kw: "IFTTD partage de connaissance" },
+        { id: "m-ifttd-59", kind: "pod", src: "IFTTD", code: "#59", min: 67, title: "Transmission : Une transmission sans coupure", who: "Francis Nappez", note: "Utile pour l'onboarding et la délégation.", url: "https://www.ifttd.io/episodes/une-transmission-sans-coupure", kw: "IFTTD transmission Nappez" },
+        { id: "m-ifttd-367", kind: "pod", src: "IFTTD", code: "#367", min: 61, title: "Intelligence(s) émotionnelle : Dans la tête de Vice-Versa", who: "Moïra Mikolajczak", url: "https://www.ifttd.io/episodes/intelligence-s-emotionelle", kw: "IFTTD intelligence émotionnelle" },
+        { id: "m-ifttd-368", kind: "pod", src: "IFTTD", code: "#368", min: 57, title: "Intelligence(s) sociale : Pourquoi il n'existe pas UNE intelligence sociale", who: "Dana Samson", url: "https://www.ifttd.io/episodes/intelligence-s-sociale", kw: "IFTTD intelligence sociale" },
+        { id: "m-cnv-gabriel", kind: "vid", src: "Canal-U", min: 78, title: "La Communication NonViolente au service de l'Agilité", who: "Philippe Gabriel", url: "https://ressources.aunege.fr/notice/view/oai:canal-u.fr:36391", kw: "Philippe Gabriel communication non violente agilité", where: "Moteur de recherche ou YouTube" },
+        { id: "m-crismer-feedback", kind: "page", src: "Agile en Seine 2017", title: "Donner et recevoir du feedback utile", who: "Paul-Georges Crismer", note: "Diapositives trouvées, pas la vidéo.", url: "https://slideshare.net/AgileEnSeine/donner-et-recevoir-du-feedback-utile-by-paulgeorges-crismer-conforit", label: "Diapositives", kw: "Crismer feedback utile", where: "YouTube" },
+        { id: "m-ad-ignace", kind: "pod", src: "Artisan Développeur", min: 17, title: "Sortir du fantasme et aller voir pour de vrai", who: "Marie Pia Ignace", note: "Aller voir le terrain avant de juger.", url: "https://podcast.ausha.co/artisan-developpeur/sortir-du-fantasme-et-aller-voir-pour-de-vrai-avec-marie-pia-ignace", kw: "Artisan Développeur gemba" },
+        { id: "m-chan-agileenseine", kind: "chan", src: "Agile en Seine", title: "La chaîne YouTube officielle", note: "Cherchez dans la chaîne : feedback, conflit, rétrospective, management.", url: "https://www.youtube.com/channel/UCg-jp2mb8FrBmlevhOCat1Q/videos", label: "Chaîne", kw: "Agile en Seine feedback", where: "YouTube" },
+        { id: "m-chan-flowcon", kind: "chan", src: "FlowCon France", title: "La chaîne YouTube", note: "À chercher : « L'art délicat de piloter 20 équipes sans se faire huer » (2026).", url: "https://www.youtube.com/@flowconfrance", label: "Chaîne", kw: ["FlowCon piloter 20 équipes sans se faire huer", "FlowCon leadership"], where: "YouTube" },
+        { id: "m-find-conflits", kind: "find", src: "Conférences agiles", title: "Conflits et sécurité psychologique en équipe", kw: ["Chouette un conflit", "sécurité psychologique équipe agile", "rétrospective animation"], where: "YouTube" }
+      ],
+      exercises: [
+        { id: "e3-feedback", b: "Le feedback en 4 temps", t: "Fait observé, impact, question ouverte, proposition. Écrivez 5 feedbacks (3 positifs, 2 difficiles), dites-les à voix haute et enregistrez-vous." },
+        { id: "e3-roles", b: "Jeux de rôle avec Claude", t: "20 minutes chacun : un junior bloqué, un senior qui refuse vos conventions, un product owner pressé, deux devs en désaccord. Demandez un retour franc." },
+        { id: "e3-reunion", b: "Préparez une réunion", t: "Ordre du jour et déroulé minute par minute d'une rétrospective de 45 minutes et d'un cadrage technique. Simulez-les seul, chronomètre en main." },
+        { id: "e3-vulga", b: "Expliquez à un non-technicien", t: "Un cache, une migration de base, la dette technique : expliquez-le à un proche en 2 minutes." }
+      ],
+      deliverable: { id: "l3-phrases", b: "Livrable", t: "Votre « boîte à phrases » : une page de formulations prêtes pour les 10 situations délicates les plus courantes." }
+    },
+    {
+      id: "p4", tab: "S7-8", weeks: [7, 8],
+      dates: "25 novembre → 9 décembre",
+      title: "Organisation, delivery et démarrage",
+      goal: "Savoir découper un projet, estimer, gérer les risques, et arriver dans le poste avec un plan pour vos 90 premiers jours.",
+      media: [
+        { id: "m-ad-fiche", kind: "pod", src: "Artisan Développeur", min: 8, title: "Rendre l'équipe prévisible", who: "Margaux Fiche", note: "Répondre à « quand sera-ce livré ? ».", url: "https://podcast.ausha.co/artisan-developpeur/rendre-l-equipe-previsible-avec-margaux-fiche", kw: "Artisan Développeur équipe prévisible" },
+        { id: "m-ad-grenzinger", kind: "pod", src: "Artisan Développeur", min: 67, title: "Aux sources de notre industrie", who: "Yannick Grenzinger", note: "Livrer de la valeur plutôt que du code.", url: "https://podcast.ausha.co/artisan-developpeur/aux-sources-de-notre-industrie-avec-yannick-grenzinger", kw: "Artisan Développeur Grenzinger" },
+        { id: "m-ifttd-75", kind: "pod", src: "IFTTD", code: "#75", min: 61, title: "Projets : Le non-agile est-il rigide ?", who: "Michel Verdun", url: "https://www.ifttd.io/episodes/le-non-agile-est-il-rigide", kw: "IFTTD non-agile rigide" },
+        { id: "m-ifttd-127", kind: "pod", src: "IFTTD", code: "#127", min: 54, title: "Agilité : Mettre de la rigueur dans l'agilité", who: "Nicolas Clavaud", note: "User stories et découpage.", url: "https://www.ifttd.io/episodes/mettre-de-la-rigueur-dans-lagilite", kw: "IFTTD rigueur agilité" },
+        { id: "m-ifttd-42", kind: "pod", src: "IFTTD", code: "#42", min: 76, title: "CI/CD : Intégration, continuité, dérive", who: "Paul Amar", url: "https://www.ifttd.io/episodes/42-integration-continuite-derive-paul-amar", kw: "IFTTD CICD" },
+        { id: "m-ifttd-96", kind: "pod", src: "IFTTD", code: "#96", min: 55, title: "Lean : Compter les bugs jusqu'à 0", who: "Marek Kalnik", note: "Un bug comme défaut d'organisation.", url: "https://www.ifttd.io/episodes/compter-les-bugs-jusqua-0", kw: "IFTTD lean bugs" },
+        { id: "m-ifttd-66", kind: "pod", src: "IFTTD", code: "#66", min: 51, title: "Post Hack : Faites entrer le hackeur", who: "Olivier Dupuis", note: "Gérer une crise sans chercher de coupable.", url: "https://www.ifttd.io/episodes/faites-entrer-le-hackeur", kw: "IFTTD post hack" },
+        { id: "m-ifttd-152", kind: "pod", src: "IFTTD", code: "#152", min: 63, title: "Impact team : Mieux qu'une équipe qui code, une équipe à impact", who: "Jeremy Krebs", url: "https://www.ifttd.io/episodes/impact-team", kw: "IFTTD impact team" },
+        { id: "m-ifttd-379", kind: "pod", src: "IFTTD", code: "#379", title: "Productivité sans IA : Le mythe de la productivité", who: "Bastien Albertus", url: "https://www.ifttd.io/episodes/productivite-sans-ia", kw: "IFTTD productivité sans IA" },
+        { id: "m-ifttd-200", kind: "pod", src: "IFTTD", code: "#200", min: 58, title: "Que faire quand on a un CEO non tech", who: "Marine Saffar", note: "Parler technique à la direction.", url: "https://www.ifttd.io/episodes/que-faire-quand-on-a-un-ceo-non-tech", kw: "IFTTD CEO non tech" },
+        { id: "m-ifttd-85", kind: "pod", src: "IFTTD", code: "#85", min: 56, title: "Progression CTO : Faire sans savoir faire", who: "René Cotton", note: "Apprendre un rôle de lead sur le tas.", url: "https://www.ifttd.io/episodes/faire-sans-savoir-faire", kw: "IFTTD progression CTO" },
+        { id: "m-find-sre", kind: "find", src: "IFTTD", title: "L'épisode sur la différence entre SRE et DevOps", note: "Cité dans le flux du podcast, lien non trouvé.", kw: "IFTTD SRE DevOps" },
+        { id: "m-find-postmortem", kind: "find", src: "Conférences", title: "Post-mortems et estimation, en français", kw: ["post-mortem blameless conférence", "NoEstimates français", "découpage user story atelier", "Devoxx France incident production"], where: "YouTube" }
+      ],
+      exercises: [
+        { id: "e4-decoupage", b: "Découpez un projet imaginaire", t: "Par exemple « ajouter le paiement en ligne à une boutique » : lots de 2 à 5 jours, dépendances, 5 principaux risques avec un plan B." },
+        { id: "e4-postmortem", b: "Rédigez un post-mortem", t: "Un incident vécu ou inventé : chronologie, cause racine, actions correctives, sans chercher de coupable." },
+        { id: "e4-plan90", b: "Plan 30-60-90 jours", t: "30 jours pour comprendre code, équipe et produit ; 60 pour les premières améliorations visibles ; 90 pour une vision technique partagée. Faites-le relire par Claude." },
+        { id: "e4-semaine1", b: "Simulez votre première semaine", t: "Avec Claude, qui joue votre manager, puis l'équipe, puis le product owner." }
+      ],
+      deliverable: { id: "l4-kit", b: "Livrable final", t: "Votre kit de démarrage : plan 30-60-90 jours, boîte à phrases et 3 ADR." }
+    }
+  ];
+
+  var BILAN = [
+    { id: "b-s1", w: 1, t: "4 épisodes écoutés, première fiche de poste rédigée" },
+    { id: "b-s2", w: 2, t: "Tableau des 5 rôles, auto-évaluation sur 4 axes, audio « mon rôle » de 3 minutes" },
+    { id: "b-s3", w: 3, t: "2 ADR rédigés, une revue de code open source" },
+    { id: "b-s4", w: 4, t: "3e ADR défendu en jeu de rôle, note « dette technique » pour non-technicien" },
+    { id: "b-s5", w: 5, t: "5 feedbacks écrits et enregistrés, 2 jeux de rôle" },
+    { id: "b-s6", w: 6, t: "2 jeux de rôle de plus, déroulé d'une rétrospective, boîte à phrases" },
+    { id: "b-s7", w: 7, t: "Découpage d'un projet avec risques, un post-mortem" },
+    { id: "b-s8", w: 8, t: "Plan 30-60-90 jours relu, simulation de la première semaine, nouvelle auto-évaluation" },
+    { id: "b-final", w: 8, t: "Test du 9 décembre : refaites l'auto-évaluation, réécoutez votre audio de la semaine 2. Visez +1 point sur chacun des 4 axes." }
+  ];
+
+  var ROLEPLAY = "Joue un développeur junior qui n'a pas avancé depuis 3 jours et n'ose pas le dire. Je suis son tech lead. Ne me facilite pas la tâche. À la fin, donne-moi un retour honnête sur ma façon de faire.";
+
+  var KIND = {
+    pod: { label: "Podcast", open: "Écouter" },
+    vid: { label: "Vidéo", open: "Regarder" },
+    page: { label: "Page", open: "Ouvrir" },
+    chan: { label: "Chaîne", open: "Ouvrir" },
+    find: { label: "À chercher", open: "" }
+  };
+
+  // ---------- état ----------
+  var LS_KEY = "techlead8.progress.v1";
+  var LS_UI = "techlead8.ui.v1";
+  var state = { done: {} };
+  var ui = { tab: null, hideDone: false };
+  var syncMode = "wait";
+  var remoteRef = null;
+  var writing = false, dirty = false, writeTimer = null;
+
+  function lsGet(k) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+  var cached = lsGet(LS_KEY);
+  if (cached && cached.done && typeof cached.done === "object") state.done = cached.done;
+  var cachedUi = lsGet(LS_UI);
+  if (cachedUi) { ui.hideDone = !!cachedUi.hideDone; ui.tab = cachedUi.tab || null; }
+
+  // ---------- dates ----------
+  function dayDiff(a, b) { return Math.floor((b - a) / 86400000); }
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  var diff = dayDiff(START, today);
+  var currentWeek = diff < 0 ? 0 : Math.min(8, Math.floor(diff / 7) + 1);
+  var finished = diff >= 56;
+  function periodOfWeek(w) { return w <= 0 ? "p1" : PERIODS[Math.min(3, Math.floor((w - 1) / 2))].id; }
+
+  var hash = (location.hash || "").replace("#", "");
+  var validTabs = PERIODS.map(function (p) { return p.id; }).concat(["bilan"]);
+  if (validTabs.indexOf(hash) >= 0) ui.tab = hash;
+  if (validTabs.indexOf(ui.tab) < 0) ui.tab = finished ? "bilan" : periodOfWeek(currentWeek);
+
+  // ---------- helpers ----------
+  function el(tag, attrs, children) {
+    var n = document.createElement(tag);
+    if (attrs) for (var k in attrs) {
+      if (k === "class") n.className = attrs[k];
+      else if (k === "text") n.textContent = attrs[k];
+      else if (k === "html") n.innerHTML = attrs[k];
+      else n.setAttribute(k, attrs[k]);
+    }
+    (children || []).forEach(function (c) { if (c) n.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+    return n;
+  }
+  function fmtMin(m) {
+    if (!m) return "";
+    var h = Math.floor(m / 60), r = m % 60;
+    return h ? (h + " h" + (r ? " " + (r < 10 ? "0" + r : r) : "")) : (r + " min");
+  }
+  function fmtDate(iso) {
+    var p = iso.split("-");
+    var mois = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+    return parseInt(p[2], 10) + " " + mois[parseInt(p[1], 10) - 1];
+  }
+  function isoToday() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function allIds() {
+    var ids = [];
+    PERIODS.forEach(function (p) {
+      p.media.forEach(function (m) { ids.push(m.id); });
+      p.exercises.forEach(function (e) { ids.push(e.id); });
+      ids.push(p.deliverable.id);
+    });
+    BILAN.forEach(function (b) { ids.push(b.id); });
+    return ids;
+  }
+  function periodIds(p) {
+    return p.media.map(function (m) { return m.id; })
+      .concat(p.exercises.map(function (e) { return e.id; }))
+      .concat([p.deliverable.id]);
+  }
+  function countDone(ids) { return ids.filter(function (id) { return !!state.done[id]; }).length; }
+
+  var CHECK_SVG = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var EXT_SVG = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2h6v6M10 2L3 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+
+  function checkButton(id, label) {
+    var b = el("button", { class: "check", type: "button", "aria-pressed": state.done[id] ? "true" : "false", "aria-label": label, "data-id": id });
+    b.innerHTML = "<span>" + CHECK_SVG + "</span>";
+    return b;
+  }
+
+  function copyText(text, btn) {
+    function ok() {
+      btn.classList.add("copied");
+      var lbl = btn.querySelector(".lbl");
+      if (lbl) { var prev = lbl.textContent; lbl.textContent = "Copié"; setTimeout(function () { lbl.textContent = prev; btn.classList.remove("copied"); }, 1400); }
+      else setTimeout(function () { btn.classList.remove("copied"); }, 1400);
+    }
+    function fallback() {
+      var target = btn.querySelector(".val") || btn;
+      var range = document.createRange(); range.selectNodeContents(target);
+      var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    }
+    try {
+      navigator.clipboard.writeText(text).then(ok, fallback);
+    } catch (e) { fallback(); }
+  }
+
+  // ---------- rendu ----------
+  function renderSummary() {
+    var ids = allIds();
+    var d = countDone(ids);
+    var pct = Math.round((d / ids.length) * 100);
+    document.getElementById("pct").innerHTML = pct + "<small>%</small>";
+
+    var mediaIds = [], mediaDone = 0, minLeft = 0;
+    PERIODS.forEach(function (p) { p.media.forEach(function (m) { mediaIds.push(m.id); if (state.done[m.id]) mediaDone++; else if (m.min) minLeft += m.min; }); });
+    var exIds = [];
+    PERIODS.forEach(function (p) { p.exercises.forEach(function (e) { exIds.push(e.id); }); exIds.push(p.deliverable.id); });
+
+    var wk = document.getElementById("sumWeek");
+    if (currentWeek === 0) wk.innerHTML = "<strong>Début le 14 octobre.</strong>";
+    else if (finished) wk.innerHTML = "<strong>Parcours terminé le 9 décembre.</strong>";
+    else wk.innerHTML = "<strong>Semaine " + currentWeek + " sur 8</strong>, jusqu'au 9 décembre";
+
+    var c = document.getElementById("sumCounts");
+    c.textContent = mediaDone + "/" + mediaIds.length + " médias · " + countDone(exIds) + "/" + exIds.length + " exercices et livrables · " + countDone(BILAN.map(function (b) { return b.id; })) + "/" + BILAN.length + " bilans";
+
+    var bar = document.getElementById("bar");
+    bar.innerHTML = "";
+    for (var w = 1; w <= 8; w++) {
+      var p = PERIODS[Math.floor((w - 1) / 2)];
+      var pIds = periodIds(p);
+      var frac = countDone(pIds) / pIds.length;
+      // deux semaines par période : la première se remplit avant la seconde
+      var first = (w % 2 === 1);
+      var fill = first ? Math.min(1, frac * 2) : Math.max(0, frac * 2 - 1);
+      var s = el("span", { class: w === currentWeek ? "now" : "" });
+      var i = el("i"); i.style.width = Math.round(fill * 100) + "%";
+      s.appendChild(i);
+      bar.appendChild(s);
+    }
+
+    var sync = document.getElementById("sync");
+    sync.setAttribute("data-state", syncMode);
+    sync.textContent = syncMode === "cloud" ? "Enregistré sur votre compte claude.ai, sur tous vos appareils"
+      : syncMode === "local" ? "Enregistré sur cet appareil seulement : connectez-vous à claude.ai pour retrouver vos cases partout"
+      : "Chargement de votre progression…";
+  }
+
+  function renderTabs() {
+    var t = document.getElementById("tabs");
+    t.innerHTML = "";
+    PERIODS.concat([{ id: "bilan", tab: "Bilan" }]).forEach(function (p) {
+      var ids = p.id === "bilan" ? BILAN.map(function (b) { return b.id; }) : periodIds(p);
+      var isNow = p.id !== "bilan" && !finished && currentWeek > 0 && periodOfWeek(currentWeek) === p.id;
+      var b = el("button", { class: "tab", type: "button", role: "tab", id: "tab-" + p.id, "aria-selected": ui.tab === p.id ? "true" : "false", "aria-controls": "panel", "data-tab": p.id }, [
+        el("span", { class: "t1", text: p.tab }),
+        el("span", { class: "t2", text: countDone(ids) + "/" + ids.length })
+      ]);
+      var dot = el("span", { class: "dot", "aria-hidden": "true" });
+      if (!isNow) dot.hidden = true;
+      b.appendChild(dot);
+      if (isNow) b.setAttribute("aria-label", p.tab + ", période en cours");
+      t.appendChild(b);
+    });
+  }
+
+  function mediaItem(m) {
+    var k = KIND[m.kind];
+    var done = !!state.done[m.id];
+    var li = el("li", { class: "item" + (done ? " is-done" : "") });
+    li.appendChild(checkButton(m.id, "Marquer comme fait : " + m.title));
+    var meta = el("div", { class: "meta" }, [
+      el("span", { class: "kind" + (m.kind === "find" ? " search" : ""), text: k.label }),
+      el("span", { text: m.src + (m.code ? " " + m.code : "") }),
+      m.min ? el("span", { text: fmtMin(m.min) }) : null
+    ]);
+    var body = el("div", { class: "body" }, [meta, el("div", { class: "title", text: m.title })]);
+    if (m.who) body.appendChild(el("div", { class: "who", text: m.who }));
+    if (m.note) body.appendChild(el("div", { class: "note", text: m.note }));
+    var actions = el("div", { class: "actions" });
+    if (m.url) {
+      var a = el("a", { class: "open", href: m.url, target: "_blank", rel: "noopener" }, [m.label || k.open]);
+      a.insertAdjacentHTML("beforeend", EXT_SVG);
+      actions.appendChild(a);
+    }
+    var kws = Array.isArray(m.kw) ? m.kw : [m.kw];
+    kws.forEach(function (kw) {
+      var btn = el("button", { class: "kw", type: "button", "data-copy": kw, "aria-label": "Copier la recherche : " + kw }, [
+        el("span", { class: "lbl", text: m.url ? "Secours" : "Copier" }),
+        el("span", { class: "val", text: kw })
+      ]);
+      actions.appendChild(btn);
+    });
+    body.appendChild(actions);
+    var where = m.where || (m.kind === "pod" ? "Spotify, Deezer, Apple Podcasts" : "");
+    if (where && !m.url) body.appendChild(el("div", { class: "where", text: "À chercher dans : " + where }));
+    if (done) body.appendChild(el("div", { class: "when", text: "Fait le " + fmtDate(state.done[m.id]) }));
+    li.appendChild(body);
+    return li;
+  }
+
+  function textItem(it, extraClass) {
+    var done = !!state.done[it.id];
+    var li = el("li", { class: "item" + (done ? " is-done" : "") });
+    li.appendChild(checkButton(it.id, "Marquer comme fait : " + (it.b || it.t)));
+    var p = el("div", { class: "ex-text" });
+    if (it.b) { p.appendChild(el("b", { text: it.b })); p.appendChild(document.createTextNode(" : " + it.t)); }
+    else p.textContent = it.t;
+    var body = el("div", { class: "body" }, [p]);
+    if (done) body.appendChild(el("div", { class: "when", text: "Fait le " + fmtDate(state.done[it.id]) }));
+    li.appendChild(body);
+    return li;
+  }
+
+  function group(title, items, ids, extra) {
+    var wrap = el("section", { class: "group" });
+    var head = el("div", { class: "group-head" }, [el("h3", { text: title }), el("span", { class: "count", text: countDone(ids) + "/" + ids.length })]);
+    wrap.appendChild(head);
+    if (extra) wrap.appendChild(extra);
+    var ul = el("ul", { class: "list" });
+    var shown = 0;
+    items.forEach(function (n) { if (n) { ul.appendChild(n); shown++; } });
+    if (shown) wrap.appendChild(ul);
+    else wrap.appendChild(el("p", { class: "empty-done", text: "Tout est fait ici." }));
+    return wrap;
+  }
+
+  function renderPanel() {
+    var panel = document.getElementById("panel");
+    panel.innerHTML = "";
+    panel.setAttribute("aria-labelledby", "tab-" + ui.tab);
+
+    var toolbar = el("div", { class: "toolbar" });
+    var tg = el("button", { class: "toggle", type: "button", id: "hideDone", "aria-pressed": ui.hideDone ? "true" : "false" }, [ui.hideDone ? "Afficher ce qui est fait" : "Masquer ce qui est fait"]);
+    toolbar.appendChild(tg);
+
+    if (ui.tab === "bilan") {
+      panel.appendChild(el("div", { class: "panel-head" }, [
+        el("div", { class: "dates", text: "Une ligne par semaine" }),
+        el("h2", { text: "Bilan de la semaine" }),
+        el("p", { class: "goal", text: "Cochez chaque dimanche. Si une semaine déborde, ne sautez pas les exercices pratiques : réduisez plutôt les écoutes." })
+      ]));
+      panel.appendChild(toolbar);
+      var items = BILAN.map(function (b) {
+        if (ui.hideDone && state.done[b.id]) return null;
+        return textItem({ id: b.id, b: b.id === "b-final" ? "9 décembre" : "Semaine " + b.w, t: b.t });
+      });
+      panel.appendChild(group("Les 8 semaines", items, BILAN.map(function (b) { return b.id; })));
+
+      var pr = el("section", { class: "prompt" }, [
+        el("h3", { class: "", text: "Jeu de rôle : la demande à copier" }),
+        el("p", {}, [el("q", { id: "rp", text: ROLEPLAY })]),
+        el("p", { class: "where", text: "Ouvrez une nouvelle conversation avec Claude et collez cette demande. Changez le personnage selon l'exercice." })
+      ]);
+      pr.querySelector("h3").style.cssText = "font-family:var(--display);font-weight:500;font-size:19px;margin:0";
+      var cb = el("button", { class: "copy-btn", type: "button", id: "copyRole" }, ["Copier la demande"]);
+      pr.appendChild(cb);
+      panel.appendChild(pr);
+      return;
+    }
+
+    var p = PERIODS.filter(function (x) { return x.id === ui.tab; })[0];
+    var isNow = !finished && currentWeek > 0 && periodOfWeek(currentWeek) === p.id;
+    var dates = el("div", { class: "dates" }, ["Semaines " + p.weeks[0] + " et " + p.weeks[1] + " · " + p.dates]);
+    if (isNow) dates.appendChild(el("span", { class: "now-badge", text: "En cours" }));
+    panel.appendChild(el("div", { class: "panel-head" }, [dates, el("h2", { text: p.title }), el("p", { class: "goal", text: p.goal })]));
+
+    var left = 0;
+    p.media.forEach(function (m) { if (!state.done[m.id] && m.min) left += m.min; });
+    if (left) toolbar.appendChild(el("span", { class: "remaining", text: "≈ " + fmtMin(left) + " d'écoute restante" }));
+    panel.appendChild(toolbar);
+
+    var mItems = p.media.map(function (m) { return (ui.hideDone && state.done[m.id]) ? null : mediaItem(m); });
+    panel.appendChild(group("À écouter, à regarder", mItems, p.media.map(function (m) { return m.id; })));
+
+    var eItems = p.exercises.map(function (e) { return (ui.hideDone && state.done[e.id]) ? null : textItem(e); });
+    panel.appendChild(group("À pratiquer seul", eItems, p.exercises.map(function (e) { return e.id; })));
+
+    var dv = el("div", { class: "deliverable" });
+    var ul = el("ul", { class: "list" });
+    ul.appendChild(textItem(p.deliverable));
+    dv.appendChild(ul);
+    panel.appendChild(dv);
+  }
+
+  function renderAll() { renderSummary(); renderTabs(); renderPanel(); }
+
+  // ---------- interactions ----------
+  function toggle(id) {
+    var next = { done: Object.assign({}, state.done) };
+    if (next.done[id]) delete next.done[id]; else next.done[id] = isoToday();
+    state = next;
+    lsSet(LS_KEY, state);
+    var scrollY = window.scrollY;
+    renderAll();
+    window.scrollTo(0, scrollY);
+    var again = document.querySelector('.check[data-id="' + id + '"]');
+    if (again) again.focus({ preventScroll: true });
+    scheduleWrite();
+  }
+
+  document.addEventListener("click", function (ev) {
+    var c = ev.target.closest(".check");
+    if (c) { toggle(c.getAttribute("data-id")); return; }
+    var t = ev.target.closest(".tab");
+    if (t) {
+      ui.tab = t.getAttribute("data-tab");
+      lsSet(LS_UI, ui);
+      try { history.replaceState(null, "", "#" + ui.tab); } catch (e) {}
+      renderTabs(); renderPanel();
+      var tabs = document.querySelector(".tabs");
+      var top = tabs.getBoundingClientRect().top + window.scrollY;
+      if (window.scrollY > top) window.scrollTo(0, top);
+      return;
+    }
+    var k = ev.target.closest(".kw");
+    if (k) { copyText(k.getAttribute("data-copy"), k); return; }
+    if (ev.target.closest("#hideDone")) {
+      ui.hideDone = !ui.hideDone; lsSet(LS_UI, ui); renderPanel(); return;
+    }
+    var cr = ev.target.closest("#copyRole");
+    if (cr) {
+      var prev = cr.textContent;
+      try {
+        navigator.clipboard.writeText(ROLEPLAY).then(function () { cr.textContent = "Copié"; setTimeout(function () { cr.textContent = prev; }, 1400); }, function () { selectRole(); });
+      } catch (e) { selectRole(); }
+    }
+  });
+  function selectRole() {
+    var q = document.getElementById("rp"); if (!q) return;
+    var r = document.createRange(); r.selectNodeContents(q);
+    var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+  }
+
+  // ---------- synchronisation ----------
+  var pending = false;
+  function scheduleWrite() {
+    if (!remoteRef) return;
+    pending = true;
+    clearTimeout(writeTimer);
+    writeTimer = setTimeout(flush, 600);
+  }
+  function flush() {
+    if (!remoteRef) return;
+    if (writing) { dirty = true; return; }
+    pending = true; writing = true; dirty = false;
+    var body = { done: Object.assign({}, state.done), updated: isoToday() };
+    remoteRef.set(body).then(function () {
+      writing = false;
+      if (dirty) flush(); else pending = false;
+    }, function (err) {
+      writing = false; pending = false;
+      if (err && err.code === "unavailable") { setTimeout(flush, 1500 + Math.random() * 1500); return; }
+      remoteRef = null; syncMode = "local"; renderSummary();
+    });
+  }
+
+  renderAll();
+
+  (async function connect() {
+    var api = window.claude;
+    if (!api || typeof api.use !== "function") { syncMode = "local"; renderSummary(); return; }
+    var db = null, user = null, uid = null;
+    try { db = await api.use("db"); } catch (e) { db = null; }
+    try { user = await api.use("user"); } catch (e) { user = null; }
+    if (user) { try { uid = await user.id(); } catch (e) { uid = null; } }
+    if (!db || !uid) { syncMode = "local"; renderSummary(); return; }
+
+    var ref;
+    try { ref = db.doc("data/users/" + uid + "/progress"); } catch (e) { syncMode = "local"; renderSummary(); return; }
+    remoteRef = ref;
+    var migrated = false;
+    ref.onSnapshot(function (snap) {
+      if (snap.metadata && snap.metadata.hasPendingWrites) return;
+      if (snap.exists) {
+        var data = snap.data() || {};
+        var remoteDone = (data.done && typeof data.done === "object") ? data.done : {};
+        if (!migrated && Object.keys(state.done).length && !Object.keys(remoteDone).length) {
+          migrated = true; syncMode = "cloud"; renderSummary(); flush(); return;
+        }
+        migrated = true;
+        syncMode = "cloud";
+        if (pending) { renderSummary(); return; }
+        state = { done: Object.assign({}, remoteDone) };
+        lsSet(LS_KEY, state);
+        var y = window.scrollY; renderAll(); window.scrollTo(0, y);
+      } else {
+        syncMode = "cloud";
+        if (!migrated && Object.keys(state.done).length) { migrated = true; flush(); }
+        migrated = true;
+        renderSummary();
+      }
+    }, function () {
+      remoteRef = null; syncMode = "local"; renderSummary();
+    });
+  })();
+})();
+</script>
+
+</body></html>
