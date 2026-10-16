@@ -1,9 +1,29 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Devenir tech lead en 8 semaines</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Plan d'autoformation de 8 semaines pour devenir tech lead : podcasts, vidéos, exercices et suivi de progression.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#eef2f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1518" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Tech lead 8 sem.">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+img{max-width:100%}
+[hidden]:not([hidden=until-found i]){display:none!important}
+</style>
 <style>
 /* Layout: one narrow column, a sticky period switcher, each item a row with a large tap target on the left. */
 :root {
@@ -36,6 +56,7 @@
 
 * { box-sizing: border-box; }
 body {
+  margin: 0;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--body);
@@ -327,6 +348,22 @@ h1 {
   border: 1px solid var(--accent); color: var(--accent); background: transparent;
   border-radius: 999px; padding: 6px 14px; font-weight: 700; font-size: 14px; cursor: pointer;
 }
+/* PWA : installation et mise à jour */
+.appbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  background: var(--accent-soft);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.appbar p { margin: 0; min-width: 0; flex: 1 1 200px; }
+.appbar-actions { display: flex; gap: 8px; }
+.appbar button {
+  border: 0; border-radius: 999px; padding: 7px 14px; font-weight: 700; font-size: 14px; cursor: pointer;
+  background: var(--accent); color: var(--surface);
+}
+.appbar button.ghost { background: transparent; color: var(--accent); }
+
 footer { font-size: 13px; color: var(--muted); }
 footer p { margin: 0 0 6px; }
 
@@ -334,6 +371,8 @@ footer p { margin: 0 0 6px; }
   * { transition: none !important; }
 }
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <header>
@@ -352,6 +391,14 @@ footer p { margin: 0 0 6px; }
     <div class="sync" id="sync" data-state="wait">Chargement de votre progression…</div>
   </section>
 
+  <div class="appbar" id="appbar" hidden>
+    <p id="appbarText"></p>
+    <div class="appbar-actions">
+      <button type="button" id="appbarGo"></button>
+      <button type="button" class="ghost" id="appbarClose">Plus tard</button>
+    </div>
+  </div>
+
   <p class="rule"><b>Après chaque écoute :</b> résumez-la à voix haute en 2 minutes sur votre dictaphone. Ce que j'ai retenu, ce que je ferais différemment, ce que je teste cette semaine.</p>
 
   <nav class="tabs" aria-label="Périodes">
@@ -361,7 +408,7 @@ footer p { margin: 0 0 6px; }
   <main id="panel" class="panel" role="tabpanel"></main>
 
   <footer>
-    <p>Chaque case cochée est enregistrée avec la date du jour. Connecté à claude.ai, vous retrouvez votre progression sur tous vos appareils.</p>
+    <p>Chaque case cochée est enregistrée avec la date du jour, sur cet appareil. L'application fonctionne aussi hors ligne.</p>
     <p>Un lien ne marche plus ? Touchez le mot-clé pour le copier, puis collez-le dans votre appli de podcasts ou dans YouTube.</p>
   </footer>
 </div>
@@ -642,7 +689,7 @@ footer p { margin: 0 0 6px; }
     var sync = document.getElementById("sync");
     sync.setAttribute("data-state", syncMode);
     sync.textContent = syncMode === "cloud" ? "Enregistré sur votre compte claude.ai, sur tous vos appareils"
-      : syncMode === "local" ? "Enregistré sur cet appareil seulement : connectez-vous à claude.ai pour retrouver vos cases partout"
+      : syncMode === "local" ? (window.claude ? "Enregistré sur cet appareil seulement : connectez-vous à claude.ai pour retrouver vos cases partout" : "Enregistré sur cet appareil, disponible hors ligne")
       : "Chargement de votre progression…";
   }
 
@@ -897,4 +944,98 @@ footer p { margin: 0 0 6px; }
 })();
 </script>
 
-</body></html>
+<script>
+/* ---------- PWA : service worker, installation, mises à jour ---------- */
+(function () {
+  "use strict";
+  var bar = document.getElementById("appbar");
+  var txt = document.getElementById("appbarText");
+  var go = document.getElementById("appbarGo");
+  var close = document.getElementById("appbarClose");
+  var action = null;
+  var DISMISS_KEY = "techlead8.installDismissed";
+
+  function isStandalone() {
+    return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+  }
+  function dismissed() { try { return localStorage.getItem(DISMISS_KEY) === "1"; } catch (e) { return false; } }
+  function show(text, label, fn, closable) {
+    txt.textContent = text;
+    go.textContent = label;
+    go.hidden = !label;
+    close.hidden = !closable;
+    action = fn;
+    bar.hidden = false;
+  }
+  function hide() { bar.hidden = true; action = null; }
+
+  go.addEventListener("click", function () { if (action) action(); });
+  close.addEventListener("click", function () {
+    try { localStorage.setItem(DISMISS_KEY, "1"); } catch (e) {}
+    hide();
+  });
+
+  // Android, Chrome, Edge : invite d'installation native
+  var deferred = null;
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    deferred = e;
+    if (isStandalone() || dismissed()) return;
+    show("Installez le plan sur votre écran d'accueil pour l'ouvrir comme une appli, même hors ligne.", "Installer", function () {
+      hide();
+      deferred.prompt();
+      deferred.userChoice.then(function () { deferred = null; });
+    }, true);
+  });
+  window.addEventListener("appinstalled", hide);
+
+  // iPhone, iPad : pas d'invite native, on explique le geste
+  var ua = navigator.userAgent || "";
+  var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  if (isIOS && !isStandalone() && !dismissed()) {
+    show("Pour installer : touchez Partager, puis « Sur l'écran d'accueil ».", "", null, true);
+  }
+
+  // Changement de jour pendant que l'appli reste ouverte : on recalcule la semaine en cours
+  var openedOn = new Date().toDateString();
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible" && new Date().toDateString() !== openedOn) location.reload();
+  });
+
+  if (!("serviceWorker" in navigator) || location.protocol === "file:") return;
+
+  var reloading = false;
+  var hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener("controllerchange", function () {
+    // Première installation : pas de rechargement. Mise à jour acceptée : on recharge.
+    if (reloading || !hadController) { hadController = true; return; }
+    reloading = true;
+    location.reload();
+  });
+
+  function offerUpdate(worker) {
+    show("Une nouvelle version du plan est disponible.", "Mettre à jour", function () {
+      worker.postMessage("skipWaiting");
+    }, false);
+  }
+
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("sw.js").then(function (reg) {
+      if (reg.waiting && navigator.serviceWorker.controller) offerUpdate(reg.waiting);
+      reg.addEventListener("updatefound", function () {
+        var nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener("statechange", function () {
+          if (nw.state === "installed" && navigator.serviceWorker.controller) offerUpdate(nw);
+        });
+      });
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "visible") reg.update().catch(function () {});
+      });
+    }).catch(function () {});
+  });
+})();
+</script>
+
+</body>
+</html>
